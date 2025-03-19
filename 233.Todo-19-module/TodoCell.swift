@@ -7,9 +7,13 @@
 
 import UIKit
 
+protocol TodoCellDelegate: AnyObject {
+    func didSelectCell (on cell: TodoCell)
+    
+}
+
 class TodoCell: UITableViewCell {
     
-    var delegate?: init(delegate: <#type#>) {
-        self.delegate = delegate
-    }
+    //var delegate: TodoCellDelegate?
+    
 }
