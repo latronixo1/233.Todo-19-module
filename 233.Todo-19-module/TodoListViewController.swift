@@ -11,12 +11,18 @@ class TodoListViewController: UITableViewController {
 
     var itemArray = ["Подключить домашний интернет", "Купить шины", "Поменять диск на ноуте"]
     
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //регистрируем ячейку по умолчанию
         tableView.register(TodoCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
+        
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
     }
 
     // MARK: - Tableview Datasource Methods
@@ -38,10 +44,7 @@ class TodoListViewController: UITableViewController {
     
     // MARK: - TableView Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //print("Выбрана задача \(itemArray[indexPath.row])")
         
-//        tableView.cellForRow(at: indexPath)?.accessoryType = .disclosureIndicator
-//        tableView.cellForRow(at: indexPath)?.accessoryType = .detailDisclosureButton
         // ставим галку при выборе и снимаем ее при повторном выборе
         if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
@@ -67,6 +70,7 @@ class TodoListViewController: UITableViewController {
             //добавить новый элемент в массив
             self.itemArray.append(textField.text!)
             
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             //перезагрузить таблицу
             self.tableView.reloadData()
         }
