@@ -31,7 +31,14 @@
                             <outlet property="delegate" destination="4Nz-UI-fex" id="hHa-y6-LxF"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Задачи" id="ENg-3d-qN2"/>
+                    <navigationItem key="navigationItem" title="Задачи" id="ENg-3d-qN2">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="VlD-KI-bsv">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="addButtonPressed:" destination="4Nz-UI-fex" id="NUe-kn-5o6"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BYB-BH-uUY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

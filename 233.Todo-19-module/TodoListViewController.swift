@@ -9,7 +9,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    let itemArray = ["Подключить домашний интернет", "Купить шины", "Поменять диск на ноуте"]
+    var itemArray = ["Подключить домашний интернет", "Купить шины", "Поменять диск на ноуте"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,4 +53,35 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
    
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        var textField = UITextField()
+        
+        //создаем модальное окно-предупреждение
+        let alert = UIAlertController(title: "Добавить новую задачу", message: "", preferredStyle: .alert)
+        
+        //создаем для него кнопку
+        let action = UIAlertAction(title: "Добавить элемент", style: .default) { (action) in
+            //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
+            
+            //добавить новый элемент в массив
+            self.itemArray.append(textField.text!)
+            
+            //перезагрузить таблицу
+            self.tableView.reloadData()
+        }
+        
+        //добавляем текстовое поле в это окно-предупреждение:
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Создайте новый элемент"
+            textField = alertTextField
+            
+        }
+        
+        //добавляем эту кнопку в это окно-предупреждение
+        alert.addAction(action)
+        
+        //отображаем окно-предупреждение
+        present(alert, animated: true, completion: nil)
+    }
 }
