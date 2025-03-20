@@ -10,33 +10,18 @@ import UIKit
 class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
-    //["Подключить домашний интернет", "Купить шины", "Поменять диск на ноуте", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a"]
     
-    let defaults = UserDefaults.standard
-    
+    //записываем в константу путь к песочнице приложения (чтобы сохранять туда временные данные), добавив имя нашего файла с расширением .plist
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //регистрируем ячейку по умолчанию
         tableView.register(TodoCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
-        
-        let newItem = Item()
-        newItem.title = "Подключить домашний интернет"
-        newItem.done = true
-        itemArray.append(newItem)
 
-        let newItem2 = Item()
-        newItem2.title = "Купить шины"
-        itemArray.append(newItem2)
-
-        let newItem3 = Item()
-        newItem3.title = "Поменять диск на ноуте"
-        itemArray.append(newItem3)
-
-//        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
-//            itemArray = items
-//        }
+        loadItems()
     }
 
     // MARK: - Tableview Datasource Methods
@@ -50,23 +35,15 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         //получаем ячейку по идентификатору
-        //let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TodoCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
         let item = itemArray[indexPath.row]
-        
         
         //заполняем ячейку из массива
         cell.textLabel?.text = item.title
         
-        
-        
-        if item.done == true {
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
-        }
-        
+        cell.accessoryType = item.done ? .checkmark : .none
+       
         return cell
     }
     
@@ -78,8 +55,8 @@ class TodoListViewController: UITableViewController {
         //меняем значение done при клике на противоположное
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        // ставим галку при выборе и снимаем ее при повторном выборе
-//        if tabl
+        //сохраняем данные
+        saveItems()
         
         //перезагрузить данные таблицы
         tableView.reloadData()
@@ -88,6 +65,7 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
    
+    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
         var textField = UITextField()
@@ -105,7 +83,9 @@ class TodoListViewController: UITableViewController {
             //добавить новый элемент в массив
             self.itemArray.append(newItem)
             
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            self.saveItems()
+            
+            
             //перезагрузить таблицу
             self.tableView.reloadData()
         }
@@ -122,5 +102,33 @@ class TodoListViewController: UITableViewController {
         
         //отображаем окно-предупреждение
         present(alert, animated: true, completion: nil)
+    }
+    
+    // MARK: - Model Manipulation Methods
+    
+    func saveItems() {
+        //сохраняем в plist - аналог userDefaults
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)    //кодируем
+            try data.write(to: dataFilePath!)           //сохраняем в песочницу
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+    }
+    
+    func loadItems() {
+        //извлекаем из plist - аналог userDefaults
+        
+        //
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item array \(error)")
+            }
+        }
     }
 }

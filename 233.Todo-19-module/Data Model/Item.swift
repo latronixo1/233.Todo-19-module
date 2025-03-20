@@ -7,7 +7,8 @@
 
 import Foundation
 
-class Item {
+//соответствие протоколу Encodable означает, что его экземпляры можно кодировать в формате файлов plist (и не только)
+class Item: Codable {
     var title: String = ""
     var done: Bool = false
 }
