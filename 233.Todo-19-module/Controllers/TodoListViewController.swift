@@ -12,7 +12,7 @@ class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
     
-    //константа - данные, загруженные из базы данных
+    //константа, которую мы будем использовать в качестве посредника для взаимодействия с базой данных
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
@@ -25,7 +25,7 @@ class TodoListViewController: UITableViewController {
         tableView.register(TodoCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
 
-        //loadItems()
+        loadItems()
     }
 
     // MARK: - Tableview Datasource Methods
@@ -55,6 +55,10 @@ class TodoListViewController: UITableViewController {
     
     //обработка события выбора ячейки
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        //для удаления можно использовать:
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
         
         //меняем значение done при клике на противоположное
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
@@ -117,6 +121,16 @@ class TodoListViewController: UITableViewController {
             print("Error saving context \(error)")
         }
     }
+    
+    func loadItems() {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            itemArray = try context.fetch(request)
+        } catch {
+            print("Error fetching data from context /(error)")
+        }
+    }
+    
     
 //    func loadItems() {
 //        //извлекаем из plist - аналог userDefaults
