@@ -25,41 +25,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
+        // Вызывается при создании сеанса создания новой сцены.
+        // Используйте этот метод, чтобы выбрать конфигурацию для создания новой сцены.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        print("Background")
-    }
-
+    //переменная - база данных SQLite
     lazy var persistentContainer: NSPersistentContainer = {
         /*
-         The persistent container for the application. This implementation
-         creates and returns a container, having loaded the store for the
-         application to it. This property is optional since there are legitimate
-         error conditions that could cause the creation of the store to fail.
-        */
+         Постоянный контейнер для приложения. Эта реализация
+                  создает и возвращает контейнер, загрузив в него хранилище для
+         приложения. Это свойство необязательно, поскольку существуют допустимые
+          ошибки, которые могут привести к сбою при создании хранилища.
+         */
         let container = NSPersistentContainer(name: "DataModel")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                // Замените эту реализацию кодом для соответствующей обработки ошибки.
+                // // фатальная ошибка() приводит к тому, что приложение генерирует журнал сбоев и завершает работу. Вам не следует использовать эту функцию в приложении доставки, хотя она может быть полезна при разработке.
                  
                 /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
+                 Типичные причины возникновения ошибки здесь включают:
+                 * Родительский каталог не существует, его невозможно создать или он запрещает запись.
+                 * Постоянное хранилище недоступно из-за разрешений или защиты данных, когда устройство заблокировано.
+                 * На устройстве недостаточно места.
+                 * Не удалось перенести хранилище на текущую версию модели.
+                 Проверьте сообщение об ошибке, чтобы определить, в чем именно заключалась проблема.
                  */
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
@@ -75,8 +66,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 try context.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                // Замените эту реализацию кодом для соответствующей обработки ошибки.
+                // // фатальная ошибка() приводит к тому, что приложение генерирует журнал сбоев и завершает работу. Вам не следует использовать эту функцию в приложении доставки, хотя она может быть полезна при разработке.
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }

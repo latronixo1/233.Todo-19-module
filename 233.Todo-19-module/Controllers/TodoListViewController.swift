@@ -6,22 +6,26 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
     
-    //записываем в константу путь к песочнице приложения (чтобы сохранять туда временные данные), добавив имя нашего файла с расширением .plist
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    //константа - данные, загруженные из базы данных
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+
         
         //регистрируем ячейку по умолчанию
         tableView.register(TodoCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
 
-        loadItems()
+        //loadItems()
     }
 
     // MARK: - Tableview Datasource Methods
@@ -77,7 +81,7 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Добавить элемент", style: .default) { (action) in
             //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
             
-            let newItem = Item()
+            let newItem = Item(context: self.context)
             newItem.title = textField.text!
             
             //добавить новый элемент в массив
@@ -107,28 +111,24 @@ class TodoListViewController: UITableViewController {
     // MARK: - Model Manipulation Methods
     
     func saveItems() {
-        //сохраняем в plist - аналог userDefaults
-        let encoder = PropertyListEncoder()
-        
         do {
-            let data = try encoder.encode(itemArray)    //кодируем
-            try data.write(to: dataFilePath!)           //сохраняем в песочницу
+            try context.save()
         } catch {
-            print("Error encoding item array, \(error)")
+            print("Error saving context \(error)")
         }
     }
     
-    func loadItems() {
-        //извлекаем из plist - аналог userDefaults
-        
-        //
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            } catch {
-                print("Error decoding item array \(error)")
-            }
-        }
-    }
+//    func loadItems() {
+//        //извлекаем из plist - аналог userDefaults
+//        
+//        //
+//        if let data = try? Data(contentsOf: dataFilePath!) {
+//            let decoder = PropertyListDecoder()
+//            do {
+//                itemArray = try decoder.decode([Item].self, from: data)
+//            } catch {
+//                print("Error decoding item array \(error)")
+//            }
+//        }
+//    }
 }
