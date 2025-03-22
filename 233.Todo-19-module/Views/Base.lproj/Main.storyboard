@@ -104,11 +104,7 @@
                                 </connections>
                             </button>
                             <connections>
-<<<<<<< Updated upstream
-                                <action selector="ButtonPlusTapped:" destination="OgQ-bw-ieO" id="QsC-ef-8Og"/>
-=======
                                 <action selector="addCategoryPressed:" destination="OgQ-bw-ieO" id="m2C-as-6LA"/>
->>>>>>> Stashed changes
                             </connections>
                         </barButtonItem>
                     </navigationItem>

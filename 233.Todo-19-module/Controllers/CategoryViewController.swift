@@ -38,12 +38,8 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         //получаем ячейку по идентификатору
-<<<<<<< Updated upstream
-        let cell = tableView.dequeueReusableCell(withIdentifier: "СategoryCell", for: indexPath)
-=======
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
->>>>>>> Stashed changes
-        
+
         //заполняем ячейку из массива
         cell.textLabel?.text = categoryArray[indexPath.row].name
         
@@ -88,9 +84,6 @@ class CategoryViewController: UITableViewController {
         //отмена окрашивания выбранной ячейки серым цветом
         tableView.deselectRow(at: indexPath, animated: true)
     }
-<<<<<<< Updated upstream
-
-=======
    
     @IBAction func addCategoryPressed(_ sender: UIBarButtonItem) {
         
@@ -128,7 +121,6 @@ class CategoryViewController: UITableViewController {
         //отображаем окно-предупреждение
         present(alert, animated: true, completion: nil)
     }
->>>>>>> Stashed changes
     
     // MARK: - Data Manipulation Methods
     
