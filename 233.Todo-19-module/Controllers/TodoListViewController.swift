@@ -29,7 +29,26 @@ class TodoListViewController: UITableViewController {
         //загружаем массив Item из БД
         loadItems()
     }
+    
+    convenience init(category: String) {
+        self.init(category: "test")
+        //создаем запрос на получение всех экземпляров Item из БД
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        
+        //настраиваем предикат (фильтр): поле title должно включать то, что написано в searchBar. [cd] - означает нечувствительность к регистру [c] и диакритике [d]
+        request.predicate = NSPredicate(format: "parentCategory CONTAINS[cd] %@", category)
+        
+        //настраиваем сортировку по полю title - по алфавиту по возрастанию
+        //request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
 
+        
+        self.loadItems(with: request)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Tableview Datasource Methods
     
     //задаем количество ячеек

@@ -19,7 +19,7 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
 
         //регистрируем ячейку по умолчанию
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: "categoryCell")
+        tableView.register(CategoryCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.delegate = self
 
         //загружаем массив Category из БД
@@ -38,15 +38,15 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         //получаем ячейку по идентификатору
-        let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        
-        let category = categoryArray[indexPath.row]
+<<<<<<< Updated upstream
+        let cell = tableView.dequeueReusableCell(withIdentifier: "СategoryCell", for: indexPath)
+=======
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+>>>>>>> Stashed changes
         
         //заполняем ячейку из массива
-        cell.textLabel?.text = category.name
+        cell.textLabel?.text = categoryArray[indexPath.row].name
         
-        //cell.accessoryType = category.done ? .checkmark : .none
-       
         return cell
     }
     
@@ -56,13 +56,27 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         //для удаления можно использовать:
-//        context.delete(categoryArray[indexPath.row])
-//        categoryArray.remove(at: indexPath.row)
+        //        context.delete(categoryArray[indexPath.row])
+        //        categoryArray.remove(at: indexPath.row)
         
         //меняем значение done при клике на противоположное
         //categoryArray[indexPath.row].done = !categoryArray[indexPath.row].done
         
-        let todoVC = TodoListViewController()
+        let todoVC = TodoListViewController(category: categoryArray[indexPath.row].name!)
+        
+//        //создаем запрос на получение всех экземпляров Item из БД
+//        let request: NSFetchRequest<Item> = Item.fetchRequest()
+//        
+//        //настраиваем предикат (фильтр): поле title должно включать то, что написано в searchBar. [cd] - означает нечувствительность к регистру [c] и диакритике [d]
+//        guard let nameCategory = categoryArray[indexPath.row].name else { return }
+//            request.predicate = NSPredicate(format: "parentCategory CONTAINS[cd] %@", categoryArray[indexPath.row].name!)
+//        
+//        //настраиваем сортировку по полю title - по алфавиту по возрастанию
+//        //request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//        
+//        //наполняем массив из БД
+//        todoVC.loadItems(with: request)
+        
         self.navigationController?.pushViewController(todoVC, animated: true)
         
         //сохраняем данные
@@ -74,10 +88,10 @@ class CategoryViewController: UITableViewController {
         //отмена окрашивания выбранной ячейки серым цветом
         tableView.deselectRow(at: indexPath, animated: true)
     }
+<<<<<<< Updated upstream
+
+=======
    
-    @IBAction func addPressed(_ sender: UIBarButtonItem) {
-        print("add button pressed")
-    }
     @IBAction func addCategoryPressed(_ sender: UIBarButtonItem) {
         
         var textField = UITextField()
@@ -86,7 +100,7 @@ class CategoryViewController: UITableViewController {
         let alert = UIAlertController(title: "Добавить новую категорию", message: "", preferredStyle: .alert)
         
         //создаем для него кнопку
-        let action = UIAlertAction(title: "Добавить ", style: .default) { (action) in
+        let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
             //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
             
             let newCategory = Category(context: self.context)
@@ -114,6 +128,7 @@ class CategoryViewController: UITableViewController {
         //отображаем окно-предупреждение
         present(alert, animated: true, completion: nil)
     }
+>>>>>>> Stashed changes
     
     // MARK: - Data Manipulation Methods
     
@@ -121,8 +136,9 @@ class CategoryViewController: UITableViewController {
         do {
             try context.save()
         } catch {
-            print("Error saving context \(error)")
+            print("Error saving category \(error)")
         }
+        tableView.reloadData()
     }
     
     //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
@@ -130,12 +146,24 @@ class CategoryViewController: UITableViewController {
         do {
             categoryArray = try context.fetch(request)
         } catch {
-            print("Error fetching data from context /(error)")
+            print("Error loading categories from context: /(error)")
         }
         //перезагрузить таблицу
         tableView.reloadData()
     }
 
+    @IBAction func addCategoryTapped(_ sender: UIBarButtonItem) {
+        print("addCategoryTapped")
+    }
     
     
+    @IBAction func add(_ sender: UIButton) {
+        print("add Tapped")
+    }
+    @IBAction func ButtonPlusTapped(_ sender: UIBarButtonItem) {
+        print("ButtonPlusTapped")
+    }
+    @IBAction func buttonTapped(_ sender: UIBarButtonItem) {
+        print("buttonTapped")
+    }
 }

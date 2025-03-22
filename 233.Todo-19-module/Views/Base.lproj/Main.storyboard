@@ -39,14 +39,7 @@
                             <outlet property="delegate" destination="4Nz-UI-fex" id="hHa-y6-LxF"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Подзадачи (Items)" id="ENg-3d-qN2">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="VlD-KI-bsv">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            <connections>
-                                <action selector="addButtonPressed:" destination="4Nz-UI-fex" id="NUe-kn-5o6"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Подзадачи (Items)" id="ENg-3d-qN2"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BYB-BH-uUY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -78,7 +71,7 @@
         <!--Категории-->
         <scene sceneID="3Um-cS-TR9">
             <objects>
-                <tableViewController id="OgQ-bw-ieO" customClass="CategoryViewController" sceneMemberID="viewController">
+                <tableViewController id="OgQ-bw-ieO" customClass="CategoryViewController" customModule="_33_Todo_19_module" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="zfS-nF-VO0">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -98,16 +91,28 @@
                             <outlet property="delegate" destination="OgQ-bw-ieO" id="v9A-RS-Mg4"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="Категории" id="j0u-5C-dKM">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="4g1-Qm-6GJ">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="rbQ-fh-I6e">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="dsq-g9-UiW">
+                                <rect key="frame" x="290" y="5" width="87" height="34.333333333333336"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                <connections>
+                                    <action selector="add:" destination="OgQ-bw-ieO" eventType="touchUpInside" id="U1c-4B-eR5"/>
+                                </connections>
+                            </button>
                             <connections>
-                                <action selector="addPressed:" destination="OgQ-bw-ieO" id="Kj9-ek-S1f"/>
+<<<<<<< Updated upstream
+                                <action selector="ButtonPlusTapped:" destination="OgQ-bw-ieO" id="QsC-ef-8Og"/>
+=======
+                                <action selector="addCategoryPressed:" destination="OgQ-bw-ieO" id="m2C-as-6LA"/>
+>>>>>>> Stashed changes
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <segue destination="4Nz-UI-fex" kind="show" identifier="goToItems" id="TIF-Ec-gan"/>
-                    </connections>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6bU-6S-2V5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -120,7 +125,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
