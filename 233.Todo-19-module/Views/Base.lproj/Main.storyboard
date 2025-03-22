@@ -75,7 +75,7 @@
             </objects>
             <point key="canvasLocation" x="388.54961832061065" y="-34.507042253521128"/>
         </scene>
-        <!--Задачи-->
+        <!--Категории-->
         <scene sceneID="3Um-cS-TR9">
             <objects>
                 <tableViewController id="OgQ-bw-ieO" customClass="CategoryViewController" sceneMemberID="viewController">
@@ -98,11 +98,10 @@
                             <outlet property="delegate" destination="OgQ-bw-ieO" id="v9A-RS-Mg4"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Задачи" id="j0u-5C-dKM">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="e4p-ur-7vQ">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <navigationItem key="navigationItem" title="Категории" id="j0u-5C-dKM">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="4g1-Qm-6GJ">
                             <connections>
-                                <action selector="addButtonPressed:" destination="OgQ-bw-ieO" id="AvY-AI-YEf"/>
+                                <action selector="addPressed:" destination="OgQ-bw-ieO" id="Kj9-ek-S1f"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -121,7 +120,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -84,7 +84,7 @@ class TodoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Добавить новую задачу", message: "", preferredStyle: .alert)
         
         //создаем для него кнопку
-        let action = UIAlertAction(title: "Добавить элемент", style: .default) { (action) in
+        let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
             //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
             
             let newItem = Item(context: self.context)
@@ -102,7 +102,7 @@ class TodoListViewController: UITableViewController {
         
         //добавляем текстовое поле в это окно-предупреждение:
         alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = "Создайте новый элемент"
+            alertTextField.placeholder = "Создайте новую задачу"
             textField = alertTextField
             
         }
