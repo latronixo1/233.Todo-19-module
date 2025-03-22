@@ -18,13 +18,15 @@ class TodoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
 
+        //searchBar.delegate = self
         
         //регистрируем ячейку по умолчанию
         tableView.register(TodoCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
 
+        //загружаем массив Item из БД
         loadItems()
     }
 
@@ -122,27 +124,48 @@ class TodoListViewController: UITableViewController {
         }
     }
     
-    func loadItems() {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
+    //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
         do {
             itemArray = try context.fetch(request)
         } catch {
             print("Error fetching data from context /(error)")
         }
+        //перезагрузить таблицу
+        tableView.reloadData()
     }
+
+}
+
+// MARK: - Search bar methods
+
+extension TodoListViewController: UISearchBarDelegate {
     
-    
-//    func loadItems() {
-//        //извлекаем из plist - аналог userDefaults
-//        
-//        //
-//        if let data = try? Data(contentsOf: dataFilePath!) {
-//            let decoder = PropertyListDecoder()
-//            do {
-//                itemArray = try decoder.decode([Item].self, from: data)
-//            } catch {
-//                print("Error decoding item array \(error)")
-//            }
-//        }
-//    }
+    //событие нажатия на кнопку поиска в searchBar
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        //создаем запрос на получение всех экземпляров Item из БД
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        
+        //настраиваем предикат (фильтр): поле title должно включать то, что написано в searchBar. [cd] - означает нечувствительность к регистру [c] и диакритике [d]
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        //настраиваем сортировку по полю title - по алфавиту по возрастанию
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        //наполняем массив из БД
+        loadItems(with: request)
+               
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            
+            //для того чтобы клавиатура исчезла, нужно сделать так, чтобы текущий элемент больше не был первым ответчиком. Но делать мы это будем в отдельном потоке
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
 }
