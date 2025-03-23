@@ -39,7 +39,14 @@
                             <outlet property="delegate" destination="4Nz-UI-fex" id="hHa-y6-LxF"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Подзадачи (Items)" id="ENg-3d-qN2"/>
+                    <navigationItem key="navigationItem" title="Подзадачи (Items)" id="ENg-3d-qN2">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="bEa-eY-j2b">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="addButtonPressed:" destination="4Nz-UI-fex" id="rBj-qj-WTs"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BYB-BH-uUY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -93,22 +100,17 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Категории" id="j0u-5C-dKM">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="rbQ-fh-I6e">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="dsq-g9-UiW">
-                                <rect key="frame" x="290" y="5" width="87" height="34.333333333333336"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Button"/>
-                                <connections>
-                                    <action selector="add:" destination="OgQ-bw-ieO" eventType="touchUpInside" id="U1c-4B-eR5"/>
-                                </connections>
-                            </button>
+                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="rbQ-fh-I6e">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <action selector="addCategoryPressed:" destination="OgQ-bw-ieO" id="m2C-as-6LA"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <segue destination="4Nz-UI-fex" kind="show" identifier="goToItems" id="fX0-5y-Aks"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6bU-6S-2V5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -121,7 +123,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

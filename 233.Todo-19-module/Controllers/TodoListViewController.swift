@@ -12,42 +12,24 @@ class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
     
+    var selectedCategory: Category? {
+        didSet {
+            //загружаем массив Item из БД
+            loadItems()
+        }
+    }
+    
     //константа, которую мы будем использовать в качестве посредника для взаимодействия с базой данных
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-
-        //searchBar.delegate = self
-        
         //регистрируем ячейку по умолчанию
         tableView.register(TodoCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
 
-        //загружаем массив Item из БД
-        loadItems()
-    }
-    
-    convenience init(category: String) {
-        self.init(category: "test")
-        //создаем запрос на получение всех экземпляров Item из БД
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        
-        //настраиваем предикат (фильтр): поле title должно включать то, что написано в searchBar. [cd] - означает нечувствительность к регистру [c] и диакритике [d]
-        request.predicate = NSPredicate(format: "parentCategory CONTAINS[cd] %@", category)
-        
-        //настраиваем сортировку по полю title - по алфавиту по возрастанию
-        //request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-
-        
-        self.loadItems(with: request)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+     }
     
     // MARK: - Tableview Datasource Methods
     
@@ -108,6 +90,7 @@ class TodoListViewController: UITableViewController {
             
             let newItem = Item(context: self.context)
             newItem.title = textField.text!
+            newItem.parentCategory = self.selectedCategory
             
             //добавить новый элемент в массив
             self.itemArray.append(newItem)
@@ -144,7 +127,16 @@ class TodoListViewController: UITableViewController {
     }
     
     //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
+        
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        
+        if let additionslPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionslPredicate])
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
         do {
             itemArray = try context.fetch(request)
         } catch {
@@ -167,13 +159,13 @@ extension TodoListViewController: UISearchBarDelegate {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         
         //настраиваем предикат (фильтр): поле title должно включать то, что написано в searchBar. [cd] - означает нечувствительность к регистру [c] и диакритике [d]
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
         
         //настраиваем сортировку по полю title - по алфавиту по возрастанию
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         //наполняем массив из БД
-        loadItems(with: request)
+        loadItems(with: request, predicate: predicate)
                
     }
 
