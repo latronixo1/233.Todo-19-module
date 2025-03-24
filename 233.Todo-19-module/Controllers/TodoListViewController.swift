@@ -15,7 +15,7 @@ class TodoListViewController: UITableViewController {
     var selectedCategory: Category? {
         didSet {
             //загружаем массив Item из БД
-            loadItems()
+            //loadItems()
         }
     }
     
@@ -88,12 +88,12 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
             //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
             
-            let newItem = Item(context: self.context)
-            newItem.title = textField.text!
-            newItem.parentCategory = self.selectedCategory
-            
-            //добавить новый элемент в массив
-            self.itemArray.append(newItem)
+//            let newItem = Item(context: self.context)
+//            newItem.title = textField.text!
+//            newItem.parentCategory = self.selectedCategory
+//            
+//            //добавить новый элемент в массив
+//            self.itemArray.append(newItem)
             
             self.saveItems()
             
@@ -127,56 +127,56 @@ class TodoListViewController: UITableViewController {
     }
     
     //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
-        
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        
-        if let additionslPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionslPredicate])
-        } else {
-            request.predicate = categoryPredicate
-        }
-        
-        do {
-            itemArray = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context /(error)")
-        }
-        //перезагрузить таблицу
-        tableView.reloadData()
-    }
+//    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
+//        
+//        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+//        
+//        if let additionslPredicate = predicate {
+//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionslPredicate])
+//        } else {
+//            request.predicate = categoryPredicate
+//        }
+//        
+//        do {
+//            itemArray = try context.fetch(request)
+//        } catch {
+//            print("Error fetching data from context /(error)")
+//        }
+//        //перезагрузить таблицу
+//        tableView.reloadData()
+//    }
 
 }
 
 // MARK: - Search bar methods
 
-extension TodoListViewController: UISearchBarDelegate {
-    
-    //событие нажатия на кнопку поиска в searchBar
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
-        //создаем запрос на получение всех экземпляров Item из БД
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        
-        //настраиваем предикат (фильтр): поле title должно включать то, что написано в searchBar. [cd] - означает нечувствительность к регистру [c] и диакритике [d]
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        
-        //настраиваем сортировку по полю title - по алфавиту по возрастанию
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        //наполняем массив из БД
-        loadItems(with: request, predicate: predicate)
-               
-    }
-
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text?.count == 0 {
-            loadItems()
-            
-            //для того чтобы клавиатура исчезла, нужно сделать так, чтобы текущий элемент больше не был первым ответчиком. Но делать мы это будем в отдельном потоке
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-        }
-    }
-}
+//extension TodoListViewController: UISearchBarDelegate {
+//    
+//    //событие нажатия на кнопку поиска в searchBar
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        
+//        //создаем запрос на получение всех экземпляров Item из БД
+//        let request: NSFetchRequest<Item> = Item.fetchRequest()
+//        
+//        //настраиваем предикат (фильтр): поле title должно включать то, что написано в searchBar. [cd] - означает нечувствительность к регистру [c] и диакритике [d]
+//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+//        
+//        //настраиваем сортировку по полю title - по алфавиту по возрастанию
+//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//        
+//        //наполняем массив из БД
+//        loadItems(with: request, predicate: predicate)
+//               
+//    }
+//
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        if searchBar.text?.count == 0 {
+//            loadItems()
+//            
+//            //для того чтобы клавиатура исчезла, нужно сделать так, чтобы текущий элемент больше не был первым ответчиком. Но делать мы это будем в отдельном потоке
+//            DispatchQueue.main.async {
+//                searchBar.resignFirstResponder()
+//            }
+//        }
+//    }
+//}

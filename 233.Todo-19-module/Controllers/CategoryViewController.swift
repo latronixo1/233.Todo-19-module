@@ -6,14 +6,13 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
-    var categories = [Category]()
-
-    //константа, которую мы будем использовать в качестве посредника для взаимодействия с базой данных
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let realm = try! Realm()
+    
+    var categories = Results<Category>?.self
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +30,7 @@ class CategoryViewController: UITableViewController {
     
     //задаем количество ячеек
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return categories?.count ?? 1
     }
     
     //функция создания каждой ячейки
@@ -74,13 +73,10 @@ class CategoryViewController: UITableViewController {
         let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
             //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
             
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = textField.text!
             
-            //добавить новый элемент в массив
-            self.categories.append(newCategory)
-            
-            self.saveCategories()
+            self.save(category: newCategory)
             
             //перезагрузить таблицу
             self.tableView.reloadData()
@@ -102,9 +98,11 @@ class CategoryViewController: UITableViewController {
     
     // MARK: - Data Manipulation Methods
     
-    func saveCategories() {
+    func save(category: Category) {
         do {
-            try context.save()
+            try realm.write() {
+                realm.add(category)
+            }
         } catch {
             print("Error saving category \(error)")
         }
@@ -112,13 +110,10 @@ class CategoryViewController: UITableViewController {
     }
     
     //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
-        do {
-            categories = try context.fetch(request)
-        } catch {
-            print("Error loading categories from context: /(error)")
-        }
-        //перезагрузить таблицу
+    func loadCategories() {
+        
+        categories = realm.objects(Category.self)
+        
         tableView.reloadData()
     }
 
