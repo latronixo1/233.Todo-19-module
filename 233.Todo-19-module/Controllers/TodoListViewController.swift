@@ -6,27 +6,25 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class TodoListViewController: UITableViewController {
 
-    var itemArray = [Item]()
+    var todoItems: Results<Item>?
+    let realm = try! Realm()
     
     var selectedCategory: Category? {
         didSet {
             //загружаем массив Item из БД
-            //loadItems()
+            loadItems()
         }
     }
     
-    //константа, которую мы будем использовать в качестве посредника для взаимодействия с базой данных
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //регистрируем ячейку по умолчанию
-        tableView.register(TodoCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(TodoCell.self, forCellReuseIdentifier: "ToDoCell")
         tableView.delegate = self
 
      }
@@ -35,21 +33,23 @@ class TodoListViewController: UITableViewController {
     
     //задаем количество ячеек
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return todoItems?.count ?? 1
     }
     
     //функция создания каждой ячейки
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         //получаем ячейку по идентификатору
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoCell", for: indexPath)
         
-        let item = itemArray[indexPath.row]
-        
-        //заполняем ячейку из массива
-        cell.textLabel?.text = item.title
-        
-        cell.accessoryType = item.done ? .checkmark : .none
+        if let item = todoItems?[indexPath.row] {
+            //заполняем ячейку из массива
+            cell.textLabel?.text = item.title
+            
+            cell.accessoryType = item.done ? .checkmark : .none
+        } else {
+            cell.textLabel?.text = "No Items added"
+        }
        
         return cell
     }
@@ -60,14 +60,14 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         //для удаления можно использовать:
-//        context.delete(itemArray[indexPath.row])
-//        itemArray.remove(at: indexPath.row)
+//        context.delete(todoItems[indexPath.row])
+//        todoItems.remove(at: indexPath.row)
         
-        //меняем значение done при клике на противоположное
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
-        //сохраняем данные
-        saveItems()
+//        //меняем значение done при клике на противоположное
+//        todoItems[indexPath.row].done = !todoItems[indexPath.row].done
+//
+//        //сохраняем данные
+//        saveItems()
         
         //перезагрузить данные таблицы
         tableView.reloadData()
@@ -88,16 +88,18 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
             //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
             
-//            let newItem = Item(context: self.context)
-//            newItem.title = textField.text!
-//            newItem.parentCategory = self.selectedCategory
-//            
-//            //добавить новый элемент в массив
-//            self.itemArray.append(newItem)
-            
-            self.saveItems()
-            
-            
+            if let currentCategory = self.selectedCategory {
+                do {
+                    try self.realm.write {
+                        let newItem = Item()
+                        newItem.title = textField.text!
+                        currentCategory.Items.append(newItem)   //так добавляется запись в отношение (связанное свойство) между таблицами
+                    }
+                } catch {
+                    print("Error saving new items, \(error)")
+                }
+           }
+
             //перезагрузить таблицу
             self.tableView.reloadData()
         }
@@ -118,17 +120,22 @@ class TodoListViewController: UITableViewController {
     
     // MARK: - Model Manipulation Methods
     
-    func saveItems() {
-        do {
-            try context.save()
-        } catch {
-            print("Error saving context \(error)")
-        }
-    }
+//    func saveItems() {
+//        do {
+//            try context.save()
+//        } catch {
+//            print("Error saving context \(error)")
+//        }
+    //}
     
     //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
-//    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
-//        
+    func loadItems() {
+        
+        todoItems = selectedCategory?.Items.sorted(byKeyPath: "title", ascending: true)
+        
+        tableView.reloadData()
+
+        
 //        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
 //        
 //        if let additionslPredicate = predicate {
@@ -138,13 +145,12 @@ class TodoListViewController: UITableViewController {
 //        }
 //        
 //        do {
-//            itemArray = try context.fetch(request)
+//            todoItems = try context.fetch(request)
 //        } catch {
 //            print("Error fetching data from context /(error)")
 //        }
 //        //перезагрузить таблицу
-//        tableView.reloadData()
-//    }
+    }
 
 }
 

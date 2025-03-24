@@ -12,8 +12,8 @@ class CategoryViewController: UITableViewController {
     
     let realm = try! Realm()
     
-    var categories = Results<Category>?.self
-
+    var categories: Results<Category>?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,7 +30,7 @@ class CategoryViewController: UITableViewController {
     
     //задаем количество ячеек
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories?.count ?? 1
+        return categories?.count ?? 1   //если категорий не будет, то будет одна строка
     }
     
     //функция создания каждой ячейки
@@ -40,7 +40,7 @@ class CategoryViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
 
         //заполняем ячейку из массива
-        cell.textLabel?.text = categories[indexPath.row].name
+        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories added yet"
         
         return cell
     }
@@ -58,7 +58,7 @@ class CategoryViewController: UITableViewController {
         let destinationVC = segue.destination as! TodoListViewController
         
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categories[indexPath.row]
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
    
@@ -112,7 +112,7 @@ class CategoryViewController: UITableViewController {
     //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
     func loadCategories() {
         
-        categories = realm.objects(Category.self)
+        categories = realm.objects(Category.self).sorted(byKeyPath: "name", ascending: false)   //по алфавиту - false
         
         tableView.reloadData()
     }
