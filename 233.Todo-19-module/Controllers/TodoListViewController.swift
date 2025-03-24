@@ -59,18 +59,21 @@ class TodoListViewController: UITableViewController {
     //обработка события выбора ячейки
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if let item = todoItems?[indexPath.row] {
+            do {
+                try realm.write {
+                    item.done = !item.done
+                }
+            } catch {
+                print("Error saving done status, \(error)")
+            }
+        }
+        
+        tableView.reloadData()
+        
         //для удаления можно использовать:
 //        context.delete(todoItems[indexPath.row])
 //        todoItems.remove(at: indexPath.row)
-        
-//        //меняем значение done при клике на противоположное
-//        todoItems[indexPath.row].done = !todoItems[indexPath.row].done
-//
-//        //сохраняем данные
-//        saveItems()
-        
-        //перезагрузить данные таблицы
-        tableView.reloadData()
         
         //отмена окрашивания выбранной ячейки серым цветом
         tableView.deselectRow(at: indexPath, animated: true)
