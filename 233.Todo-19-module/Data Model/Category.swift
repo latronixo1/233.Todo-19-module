@@ -10,5 +10,6 @@ import RealmSwift
 
 class Category: Object {
     @objc dynamic var name: String = ""
+    @objc dynamic var rowColor: String = ""
     let Items = List<Item>()    //отношение Items - к классу (таблице в БД) Item.
 }

@@ -1,4 +1,4 @@
- platform :ios, '16.6'
+ platform :ios, '16.0'
 
 target '233.Todo-19-module' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -6,5 +6,6 @@ target '233.Todo-19-module' do
 
   pod 'RealmSwift'
   pod 'SwipeCellKit'
-
+  pod 'ChameleonFramework/Swift', :git => 'https://github.com/wowansm/Chameleon.git', :branch => 'swift5'
+  
 end
