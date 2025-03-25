@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
 
@@ -27,6 +28,7 @@ class TodoListViewController: SwipeTableViewController {
         //регистрируем ячейку по умолчанию
         //tableView.register(TodoCell.self, forCellReuseIdentifier: "ToDoCell")
         tableView.delegate = self
+        tableView.separatorStyle = .none
      }
     
     // MARK: - Tableview Datasource Methods
@@ -39,15 +41,20 @@ class TodoListViewController: SwipeTableViewController {
     //функция создания каждой ячейки
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        //получаем ячейку по идентификатору
-        //let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoCell", for: indexPath)
-        
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row] {
             //заполняем ячейку из массива
             cell.textLabel?.text = item.title
             
+            //Меняем цвет ячеек в цвет выбранной категории от светлого оттенка до темного
+            if let color = UIColor(hexString: selectedCategory!.rowColor)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(todoItems!.count)) {
+                cell.backgroundColor = color
+                //а цвет текста наоборот - при светлом фоне он черный, а когда фон темнеет - он белеет
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
+            
+            //галку ставим, если задача выполнена, и наоборот
             cell.accessoryType = item.done ? .checkmark : .none
         } else {
             cell.textLabel?.text = "No Items added"
