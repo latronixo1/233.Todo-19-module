@@ -6,43 +6,55 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
+import ChameleonFramework
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
-    var categories = [Category]()
-
-    //константа, которую мы будем использовать в качестве посредника для взаимодействия с базой данных
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
+    let realm = try! Realm()
+    
+    var categories: Results<Category>?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //регистрируем ячейку по умолчанию
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: "CategoryCell")
+        //tableView.register(CategoryCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.delegate = self
 
         //загружаем массив Category из БД
         loadCategories()
+        
+        //убрать разделители между строками
+        tableView.separatorColor = .none
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar else { fatalError("Navigation controller does not exist")}
+        navBar.backgroundColor = UIColor(hexString: "1D9BF6")
+    }
     
     // MARK: - TableView Datasource Methods
     
     //задаем количество ячеек
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return categories?.count ?? 1   //если категорий не будет, то будет одна строка
     }
     
     //функция создания каждой ячейки
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        //получаем ячейку по идентификатору
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         //заполняем ячейку из массива
-        cell.textLabel?.text = categories[indexPath.row].name
-        
+        if let category = categories?[indexPath.row] {
+            cell.textLabel?.text = category.name
+            
+            guard let categoryColor = UIColor(hexString: category.rowColor) else  { fatalError() }
+            cell.backgroundColor = categoryColor
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+            
+        }
         return cell
     }
     
@@ -52,6 +64,9 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         performSegue(withIdentifier: "goToItems", sender: self)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+
     }
     
     //данная функция будет выполнена непосредственно перед переходом к сигвею
@@ -59,7 +74,7 @@ class CategoryViewController: UITableViewController {
         let destinationVC = segue.destination as! TodoListViewController
         
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categories[indexPath.row]
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
    
@@ -74,13 +89,11 @@ class CategoryViewController: UITableViewController {
         let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
             //что должно произойти когда пользователь кликнет на кнопку "Добавить элемент" в UIAlert
             
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = textField.text!
+            newCategory.rowColor = String(UIColor.randomFlat().hexValue())
             
-            //добавить новый элемент в массив
-            self.categories.append(newCategory)
-            
-            self.saveCategories()
+            self.save(category: newCategory)
             
             //перезагрузить таблицу
             self.tableView.reloadData()
@@ -102,9 +115,11 @@ class CategoryViewController: UITableViewController {
     
     // MARK: - Data Manipulation Methods
     
-    func saveCategories() {
+    func save(category: Category) {
         do {
-            try context.save()
+            try realm.write() {
+                realm.add(category)
+            }
         } catch {
             print("Error saving category \(error)")
         }
@@ -112,14 +127,27 @@ class CategoryViewController: UITableViewController {
     }
     
     //функция загрузки имеет аргумент - принимает настроенную (с правилами фильтрации и сортировки) переменную request, у которого значение по умолчанию - загрузка всех (без фильтрации и сортировки) данных
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
-        do {
-            categories = try context.fetch(request)
-        } catch {
-            print("Error loading categories from context: /(error)")
-        }
-        //перезагрузить таблицу
+    func loadCategories() {
+        
+        categories = realm.objects(Category.self).sorted(byKeyPath: "name", ascending: false)   //по алфавиту - false
+        
         tableView.reloadData()
+    }
+    
+    // MARK: - Delete Data From Swipe
+    
+    //событие удаления ячейки
+    override func updateModel(at indexPath: IndexPath) {
+        if let categoryForDeletion = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                }
+            } catch {
+                print("Error deleting category, \(error)")
+            }
+        }
     }
 
 }
+
