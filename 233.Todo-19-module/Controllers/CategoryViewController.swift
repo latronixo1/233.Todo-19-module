@@ -29,6 +29,10 @@ class CategoryViewController: SwipeTableViewController {
         tableView.separatorColor = .none
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar else { fatalError("Navigation controller does not exist")}
+        navBar.backgroundColor = UIColor(hexString: "1D9BF6")
+    }
     
     // MARK: - TableView Datasource Methods
     
@@ -43,11 +47,13 @@ class CategoryViewController: SwipeTableViewController {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         //заполняем ячейку из массива
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories added yet"
-        
-        if let rowColor = categories?[indexPath.row].rowColor {
-            cell.backgroundColor = UIColor(hexString: rowColor)
-            print(rowColor)
+        if let category = categories?[indexPath.row] {
+            cell.textLabel?.text = category.name
+            
+            guard let categoryColor = UIColor(hexString: category.rowColor) else  { fatalError() }
+            cell.backgroundColor = categoryColor
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+            
         }
         return cell
     }
@@ -58,6 +64,9 @@ class CategoryViewController: SwipeTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         performSegue(withIdentifier: "goToItems", sender: self)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+
     }
     
     //данная функция будет выполнена непосредственно перед переходом к сигвею

@@ -15,6 +15,8 @@ class TodoListViewController: SwipeTableViewController {
 
     var todoItems: Results<Item>?
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     var selectedCategory: Category? {
         didSet {
             //загружаем массив Item из БД
@@ -28,8 +30,74 @@ class TodoListViewController: SwipeTableViewController {
         //регистрируем ячейку по умолчанию
         //tableView.register(TodoCell.self, forCellReuseIdentifier: "ToDoCell")
         tableView.delegate = self
+        
+        //убираем разделители между ячейками
         tableView.separatorStyle = .none
      }
+    
+    //перед появлением экрана окрасим navigationBar в цвет выбранной категории
+    override func viewWillAppear(_ animated: Bool) {
+        //извлекаем строку с текстом из БД (в БД нельзя хранить цвет, поэтому храним в формате String)
+        if let colorHex = selectedCategory?.rowColor {
+            
+            title = selectedCategory!.name
+            
+            guard let navBar = navigationController?.navigationBar else { fatalError("Navigation controller does not exist") }
+            
+            //получаем цвет путем преобразования из строки, содержащей hex
+            if let navBarColor = UIColor(hexString: colorHex) {
+                
+                //Для новых версий ios (>15), чтобы цвет навбара не перекрывался
+                if #available(iOS 15.0, *) {
+                    let appearance = UINavigationBarAppearance()
+                    appearance.configureWithOpaqueBackground()
+                    appearance.backgroundColor = navBarColor
+                    
+                    // Устанавливаем цвет заголовка (стандартный и большой)
+                    appearance.titleTextAttributes = [.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                    appearance.largeTitleTextAttributes = [.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                    
+                    navBar.standardAppearance = appearance
+                    navBar.scrollEdgeAppearance = appearance
+                } else {    //а теперь для старых (<15) версий
+                    navBar.backgroundColor = navBarColor    //у Анжелы это barTintColor (так было в предыдущих версиях iOS)
+                    navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+//                    navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
+                    
+                    navBar.titleTextAttributes = [.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                    navBar.largeTitleTextAttributes = [.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+                }
+                
+                //Меняем цвета searchBar'a
+                if let searchBar = searchBar {
+                    // Убираем стандартный фон и рамку
+                    searchBar.backgroundImage = UIImage() // Прозрачный фон
+                    searchBar.backgroundColor = navBarColor
+                    searchBar.barTintColor = .clear      // Прозрачный бар
+                    
+                    // Настраиваем текстовое поле
+                    let searchTextField = searchBar.searchTextField
+                    searchTextField.backgroundColor = .white // Белый фон поля ввода
+                    searchTextField.borderStyle = .none      // Убираем стандартную рамку
+                    
+                    // Кастомная рамка
+                    searchTextField.layer.borderWidth = 1.0
+                    searchTextField.layer.borderColor = navBarColor.cgColor
+                    searchTextField.layer.cornerRadius = 10.0 // Закругление углов
+                    searchTextField.layer.masksToBounds = true
+                    
+                    // тень вокруг рамки
+                    searchTextField.layer.shadowColor = navBarColor.cgColor
+                    searchTextField.layer.shadowOpacity = 0.7
+                    searchTextField.layer.shadowOffset = CGSize(width: 0, height: 2)
+                    searchTextField.layer.shadowRadius = 4
+                    
+                    //Цвет иконки
+                    searchTextField.leftView?.tintColor = navBarColor
+                }
+            }
+        }
+    }
     
     // MARK: - Tableview Datasource Methods
     
