@@ -7,6 +7,6 @@
 
 import UIKit
 
-class CategoryCell: UITableViewCell {
-    
-}
+//class CategoryCell: UITableViewCell {
+//    
+//}

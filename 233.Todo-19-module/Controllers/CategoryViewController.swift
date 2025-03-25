@@ -19,11 +19,13 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
         
         //регистрируем ячейку по умолчанию
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: "CategoryCell")
+        //tableView.register(CategoryCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.delegate = self
 
         //загружаем массив Category из БД
         loadCategories()
+        
+        tableView.rowHeight = 80.0
     }
 
     
@@ -33,12 +35,6 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categories?.count ?? 1   //если категорий не будет, то будет одна строка
     }
-    
-//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! SwipeTableViewCell
-//        cell.delegate = self
-//        return cell
-//    }
     
     //функция создания каждой ячейки
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -131,9 +127,37 @@ class CategoryViewController: UITableViewController {
 
 extension CategoryViewController: SwipeTableViewCellDelegate {
     
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> [SwipeCellKit.SwipeAction]? {
-        q
+    //Обработка события короткого свайпа влево
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+
+        //обработка события удаления (что мы будем удалять и как?)
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            // handle action by updating model with deletion
+            
+            if let categoryForDeletion = self.categories?[indexPath.row] {
+                do {
+                    try self.realm.write {
+                        self.realm.delete(categoryForDeletion)
+                    }
+                } catch {
+                    print("Error deleting category, \(error)")
+                }
+                //tableView.reloadData()
+            }
+        }
+
+        // картинка для кнопки, которая появится справа при свайпе влево
+        deleteAction.image = UIImage(named: "delete-icon")
+
+        return [deleteAction]
     }
     
-    
+    //Обработка события длинного свайпа влево (
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .destructive
+        //options.transitionStyle = .border
+        return options
+    }
 }
