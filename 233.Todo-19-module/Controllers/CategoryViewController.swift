@@ -23,8 +23,6 @@ class CategoryViewController: SwipeTableViewController {
 
         //загружаем массив Category из БД
         loadCategories()
-        
-        tableView.rowHeight = 80.0
     }
 
     
@@ -120,6 +118,7 @@ class CategoryViewController: SwipeTableViewController {
     
     // MARK: - Delete Data From Swipe
     
+    //событие удаления ячейки
     override func updateModel(at indexPath: IndexPath) {
         if let categoryForDeletion = self.categories?[indexPath.row] {
             do {
@@ -129,7 +128,6 @@ class CategoryViewController: SwipeTableViewController {
             } catch {
                 print("Error deleting category, \(error)")
             }
-            //tableView.reloadData()
         }
     }
 

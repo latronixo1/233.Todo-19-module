@@ -8,10 +8,11 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
+
+    let realm = try! Realm()
 
     var todoItems: Results<Item>?
-    let realm = try! Realm()
     
     var selectedCategory: Category? {
         didSet {
@@ -24,9 +25,8 @@ class TodoListViewController: UITableViewController {
         super.viewDidLoad()
         
         //регистрируем ячейку по умолчанию
-        tableView.register(TodoCell.self, forCellReuseIdentifier: "ToDoCell")
+        //tableView.register(TodoCell.self, forCellReuseIdentifier: "ToDoCell")
         tableView.delegate = self
-
      }
     
     // MARK: - Tableview Datasource Methods
@@ -40,7 +40,9 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         //получаем ячейку по идентификатору
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoCell", for: indexPath)
+        //let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row] {
             //заполняем ячейку из массива
@@ -131,6 +133,21 @@ class TodoListViewController: UITableViewController {
         
         tableView.reloadData()
 
+    }
+    
+    // MARK: - Delete Data From Swipe
+    
+    //событие удаления ячейки
+    override func updateModel(at indexPath: IndexPath) {
+        if let itemForDeletion = self.todoItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(itemForDeletion)
+                }
+            } catch {
+                print("Error deleting category, \(error)")
+            }
+        }
     }
 
 }

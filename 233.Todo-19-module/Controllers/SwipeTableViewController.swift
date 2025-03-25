@@ -8,16 +8,21 @@
 import UIKit
 import SwipeCellKit
 
+//суперкласс, благодаря которому можно сократить количество кода, если в нашем приложении нужно реализовать возможность свайпа более чем в одной таблице
 class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.rowHeight = 80
+
      }
     
+    //создание ячейки. Здесь собраны только общие для всех дочерних таблиц действия
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //получаем ячейку по идентификатору
+        //получаем ячейку по идентификатору как ячейку с реализованной функцией свайпа
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
+        //ее делегатом назначаем себя
         cell.delegate = self
 
         return cell
@@ -31,10 +36,7 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
             // handle action by updating model with deletion
             
-            print("Delete cell")
-            
             self.updateModel(at: indexPath)
-            
         }
 
         // картинка для кнопки, которая появится справа при свайпе влево
@@ -43,7 +45,7 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         return [deleteAction]
     }
     
-    //Обработка события длинного свайпа влево (
+    //Обработка события длинного свайпа влево (удаление ячейки)
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
         options.expansionStyle = .destructive
@@ -51,6 +53,7 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         return options
     }
 
+    //эта функция будет переопределяться в дочерних классах. Здесь будет непосредственно описано удаление ячейки
     func updateModel (at indexPath: IndexPath) {
         
     }
