@@ -5,5 +5,6 @@ target '233.Todo-19-module' do
   use_frameworks!
 
   pod 'RealmSwift'
+  pod 'SwipeCellKit'
 
 end

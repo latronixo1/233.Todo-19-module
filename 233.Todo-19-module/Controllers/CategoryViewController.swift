@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import SwipeCellKit
 
 class CategoryViewController: UITableViewController {
     
@@ -33,11 +34,18 @@ class CategoryViewController: UITableViewController {
         return categories?.count ?? 1   //если категорий не будет, то будет одна строка
     }
     
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! SwipeTableViewCell
+//        cell.delegate = self
+//        return cell
+//    }
+    
     //функция создания каждой ячейки
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         //получаем ячейку по идентификатору
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as! SwipeTableViewCell
+        cell.delegate = self
 
         //заполняем ячейку из массива
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories added yet"
@@ -117,4 +125,15 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
 
+}
+
+// MARK: - Swipe Cell Delegate Methods
+
+extension CategoryViewController: SwipeTableViewCellDelegate {
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> [SwipeCellKit.SwipeAction]? {
+        q
+    }
+    
+    
 }
